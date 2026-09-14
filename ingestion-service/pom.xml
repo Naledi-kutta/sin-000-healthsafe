@@ -31,6 +31,20 @@
       <artifactId>opencsv</artifactId>
       <version>5.9</version>
     </dependency>
+
+<!--      <dependency>-->
+<!--        <groupId>org.apache.commons</groupId>-->
+<!--        <artifactId>commons-lang3</artifactId>-->
+<!--        <version>3.14.0</version>-->
+<!--      </dependency>-->
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.0</version>
+    </dependency>
+
+
   </dependencies>
 
   <build>
@@ -54,6 +68,17 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <mainClass>co.wethinkcode.healthsafe.CsvReader</mainClass>
+        </configuration>
+      </plugin>
+
+
     </plugins>
   </build>
 </project>
