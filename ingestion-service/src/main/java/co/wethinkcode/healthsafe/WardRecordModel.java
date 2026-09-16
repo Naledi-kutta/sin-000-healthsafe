@@ -18,6 +18,7 @@ public class WardRecordModel {
 
 
     private String notes;
+    
 
     public WardRecordModel(String wardId, String wing, String department, Integer bedsAvailable, String notes) {
         this.wardId = wardId;
