@@ -4,8 +4,10 @@ import com.opencsv.CSVReader;
 
 import java.util.ArrayList;
 import java.util.ArrayList.*;
+import java.util.HashSet;
 import java.util.List;
 import java.io.*;
+import java.util.Set;
 
 import static co.wethinkcode.healthsafe.CsvReader.*;
 
@@ -15,20 +17,42 @@ public class CsvCleaner {
 
     public static ArrayList<WardRecordModel> getCleanedWards() throws Exception {
 
+        ArrayList<WardRecordModel> cleaned = new ArrayList<>();
+        Set<String> wardIds = new HashSet<>();
+
         List<String[]> rows;
-        try (Reader reader = new FileReader("ingestion-service/src/main/resources/wards-outdated.csv")) {
-            rows = new CSVReader(reader).readAll();
+        try(
+        InputStream input = CsvCleaner.class.getClassLoader()
+                .getResourceAsStream("wards-outdated.csv")) {
+            if (input == null) {
+                throw new FileNotFoundException("wards-outdated.csv not found");
+            }
+
+
+            try (CSVReader reader = new CSVReader(new InputStreamReader(input))) {
+                rows = reader.readAll();
+            }
         }
 
-        ArrayList<WardRecordModel> cleaned = new ArrayList<>();
+
+//        try (Reader reader = new FileReader("ingestion-service/src/main/resources/wards-outdated.csv")) {
+//            rows = new CSVReader(reader).readAll();
+//        }
+
         for (int i = 1; i < rows.size(); i++) {
             String[] elem = rows.get(i);
             WardRecordModel cleanedElem = cleanRow(elem);
-            cleaned.add(cleanedElem);
+
+            if (wardIds.add(cleanedElem.getWardId())) {
+                cleaned.add(cleanedElem);
+            }
+          //  cleaned.add(cleanedElem);
 
         }
         return cleaned;
     }
+
+
 
         public static void main(String[] args) throws Exception {
             CsvCleaner cleaner = new CsvCleaner();
@@ -36,10 +60,11 @@ public class CsvCleaner {
             //ArrayList<WardRecordModel> cleaned = new getCleanedWards();
 
             cleaned.forEach(clean -> {
+                System.out.println("---");
                 System.out.println(clean.getWardId());
                 System.out.println(clean.getWing().toString());
                 System.out.println(clean.getDepartment().toString());
-                System.out.println(clean.getBedsAvailable().toString());
+                System.out.println(clean.getBedsAvailable());
             });
         }
 
@@ -69,13 +94,15 @@ public class CsvCleaner {
 //            System.out.println(department);
 //            System.out.println(beds);
 //            System.out.println(notes);
+
             return new WardRecordModel(wardId, wing, department, beds, notes);
         }
 
 
-        // trims outer whitespace and collapses internal double spaces to one
+
+        // trims outer whitespaceand double spaces
         private static String cleanText(String value) {
-            if (value == null) return "not available";
+            if (value == null || value.trim().isEmpty()) return "not available";
             return value.trim().replaceAll("\\s+", " ");
         }
 
