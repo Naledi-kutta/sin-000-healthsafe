@@ -1,13 +1,41 @@
 package co.wethinkcode.healthsafe;
 
 import io.javalin.Javalin;
+import org.json.JSONObject;
 
 public class AlertLevelServiceApp {
 
-    public static void main(String[] args) {
-        Javalin app = Javalin.create().start(7032);
+    private final Javalin server;
+    private final AlertLevel alertLevel;
 
-        app.get("/health", ctx -> ctx.result("OK"));
+    public AlertLevelServiceApp() throws Exception {
+        this.alertLevel = new AlertLevel();
+        this.server = Javalin.create();
+        this.server.get("/health",ctx -> ctx.result("OK"));
+        this.server.get("/alert-level",ctx -> {
+            JSONObject response = new JSONObject();
+
+            response.put("level",alertLevel.getAlertLevel()
+            );
+            ctx.json(response.toString());
+
+        });
+    }
+
+    public Javalin start(){
+        return this.server.start(7032);
+    }
+
+    public Javalin stop(){
+        return this.server.stop();
+    }
+
+
+
+    public static void main(String[] args) throws Exception {
+        AlertLevelServiceApp app = new AlertLevelServiceApp();
+        app.start();
+
 
         // TODO (Tracks the hospital Emergency Status (0-8, 8 = full Code Blue).)
         // Add domain endpoints for alert-level-service here.
