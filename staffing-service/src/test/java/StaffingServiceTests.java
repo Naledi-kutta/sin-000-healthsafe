@@ -18,7 +18,7 @@ public class StaffingServiceTests {
 
         assertNotNull(wards);
         assertEquals("W-01",wards.getWardId());
-        System.out.println(wards);
+        //System.out.println(wards);
 
 
     }
@@ -44,7 +44,7 @@ public class StaffingServiceTests {
     }
 
     @Test
-    public void handleUnknownWard(){
+    public void  handleUnknownWard(){
         StaffingService service = new StaffingService();
         assertThrows(RuntimeException.class,
                 () -> service.getWardForSchedule("W-99")
