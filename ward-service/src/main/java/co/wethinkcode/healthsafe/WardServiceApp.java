@@ -5,6 +5,7 @@ import kong.unirest.Unirest;
 import kong.unirest.HttpResponse;
 //import java.net.http.HttpResponse;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 
 public class WardServiceApp {
@@ -16,9 +17,18 @@ public class WardServiceApp {
     public WardServiceApp(){
         this.server = Javalin.create();
         this.server.get("/wards",ctx -> ctx.json(new WardService().getWardsFromIngestionService()));
-        this.server.get("/wards/{id}", ctx ->
-                ctx.json(new WardService().getWardByWardId(ctx.pathParam("id"))));
-
+//        this.server.get("/wards/{id}", ctx ->
+//                ctx.json(new WardService().getWardByWardId(ctx.pathParam("id"))));
+        this.server.get("/wards",ctx -> {
+            ArrayList<WardServiceResponse> validWard = new WardService()
+                    .getWardByWardId(ctx.pathParam("id"));
+            if(validWard.isEmpty()){
+                ctx.status(404);
+                ctx.result("Unkown ward: " + ctx.pathParam("id"));
+                return;
+            }
+            ctx.json(validWard);
+        });
 
         this.server.exception((RuntimeException.class), (e,ctx) -> {
             e.printStackTrace();
