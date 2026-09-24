@@ -1,14 +1,14 @@
 package co.wethinkcode.healthsafe;
 
-public class WardResponse {
+public class WardServiceResponse {
         private String wardId;
         private String wing;
         private String department;
         private Integer bedsAvailable;
 
-        public WardResponse(){};
-        
-        public WardResponse(String wardId,String wing, String department, Integer bedsAvailable){
+        public WardServiceResponse(){};
+
+        public WardServiceResponse(String wardId, String wing, String department, Integer bedsAvailable){
             this.wardId = wardId;
             this.wing = wing;
             this.department = department;
