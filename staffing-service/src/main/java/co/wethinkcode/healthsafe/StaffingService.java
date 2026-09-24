@@ -6,7 +6,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.json.JSONObject;
 
 public class StaffingService {
-    private static final String WARD_SERVICE_URL = "http://localhost:7030/wards";
+    private static final String WARD_SERVICE_URL = "http://localhost:7031/wards";
     private static final String ALERT_LEVEL_SERVICE_URL = "http://localhost:7032/alert-level";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -51,12 +51,13 @@ public class StaffingService {
                     .asString();
 
             if (response.getStatus() != 200) {
-                throw new RuntimeException("Alert-level service is unavailable");
+                throw new RuntimeException("Alert Level service is unavailable");
 
             }
 
             JSONObject json = new JSONObject(response.getBody());
             return json.getInt("level");
+
 
         }catch(RuntimeException error){
         throw error;
