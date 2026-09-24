@@ -37,6 +37,6 @@ public class StaffingResponse {
     }
 
     public String getDepartment(){
-       return getDepartment();
+       return department;
     }
 }
