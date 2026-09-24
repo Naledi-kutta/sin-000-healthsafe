@@ -3,6 +3,8 @@ package co.wethinkcode.healthsafe;
 import io.javalin.Javalin;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class AlertLevelServiceApp {
 
     private final Javalin server;
@@ -13,13 +15,17 @@ public class AlertLevelServiceApp {
         this.server = Javalin.create();
         this.server.get("/health",ctx -> ctx.result("OK"));
         this.server.get("/alert-level",ctx -> {
-            JSONObject response = new JSONObject();
-
-            response.put("level",alertLevel.getAlertLevel()
-            );
-            ctx.json(response.toString());
-
+            ctx.json(Map.of("level",alertLevel.getAlertLevel()));
         });
+
+//        this.server.get("/alert-level",ctx -> {
+//            JSONObject response = new JSONObject();
+//
+//            response.put("level",alertLevel.getAlertLevel()
+//            );
+//            ctx.json(response);
+//
+//        });
     }
 
     public Javalin start(){
