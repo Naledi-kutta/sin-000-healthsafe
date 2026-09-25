@@ -1,10 +1,14 @@
 package co.wethinkcode.healthsafe;
 
+import co.wethinkcode.healthsafe.mq.MqConfig;
 import io.javalin.Javalin;
+
+import javax.jms.JMSException;
 
 public class StaffingServiceApp {
     private final Javalin server;
     private final StaffingService staffingService;
+    private final MqConfig mqConfig = new MqConfig();
 
 
     public StaffingServiceApp(){
@@ -12,12 +16,18 @@ public class StaffingServiceApp {
         this.server = Javalin.create();
         this.server.get("/health", ctx -> ctx.result("OK"));
         this.server.get("/staffing/{id}",ctx -> {
-            StaffingResponse response = staffingService.getStaffingForWard(
-                    ctx.pathParam("id")
-            );
+                    StaffingResponse response = staffingService.getStaffingForWard(
+                            ctx.pathParam("id"));
+                try{
+                    mqConfig.sendMessage(response.getWardId(),response.getAlertLevel());
+                }catch (Exception error){
+                    System.err.println("Could not publish staffing event: " + error.getMessage());
+                }
             ctx.json(response);
                 });
     }
+
+
 
     public Javalin start(){
        return this.server.start(7033);
